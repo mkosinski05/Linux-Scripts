@@ -1,9 +1,9 @@
 
 ## Build the Image
 
-    `docker build --no-cache --rm --build-arg "host_uid=$(id -u)" \`
-    `--build-arg "user_name=$(whoami)"\`
-    `--build-arg "host_gid=$(id -g)" --tag "rzg2e_yocto:1.0" .`
+    `docker build --no-cache --rm --build-arg "host_uid=$(id -u)" \
+    --build-arg "user_name=$(whoami)"\
+    --build-arg "host_gid=$(id -g)" --tag "rzg2e_yocto:1.0" .`
 
 ## Run the image
 
