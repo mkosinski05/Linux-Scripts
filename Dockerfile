@@ -42,6 +42,11 @@ ENV BUILD_OUTPUT_DIR /home/$user_name/yocto/build
 RUN mkdir -p $BUILD_INPUT_DIR $BUILD_INPUT_DIR/proprietary
 RUN mkdir -p $BUILD_OUTPUT_DIR $BUILD_OUTPUT_DIR/conf
 
+# Configure git using the login user name and gmiail
+# NOTE: this is required for yocto but does not need to be a real git account
+RUN git config --global user.email "$user_name.gmail.com"
+RUN git config --global user.name $user_name
+
 WORKDIR $BUILD_INPUT_DIR
 ADD $PWD/rzg2_bsp_eva_v102.tar.gz .
 
