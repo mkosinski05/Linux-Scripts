@@ -28,26 +28,32 @@ ARG user_name=rea_user
 ENV PROJECT $user_name
 
 
-ARG host_uid=1001
-ARG host_gid=1001
+ARG host_uid=1000
+ARG host_gid=1000
+RUN echo $host_uid && echo $host_gid
 RUN groupadd -g $host_gid $user_name && \
     useradd -g $host_gid -m -s /bin/bash -u $host_uid $user_name
     
 # switches the user from root to $USER_NAME.    
 USER $user_name
 
-ENV BUILD_INPUT_DIR /home/$user_name/yocto/input
+ENV BUILD_INPUT_DIR /home/$user_name/yocto
+ENV BUILD_OUTPUT_DIR /home/$user_name/yocto/build
 RUN mkdir -p $BUILD_INPUT_DIR $BUILD_INPUT_DIR/proprietary
+RUN mkdir -p $BUILD_OUTPUT_DIR $BUILD_OUTPUT_DIR/conf
 
 WORKDIR $BUILD_INPUT_DIR
 ADD $PWD/rzg2_bsp_eva_v102.tar.gz .
+
+USER root
+RUN chown -R $host_uid:$host_gid .
+USER $user_name
 
 WORKDIR $BUILD_INPUT_DIR/meta-rzg2
 RUN sh ./docs/sample/copyscript/copy_proprietary_softwares.sh ../proprietary
 
 WORKDIR $BUILD_INPUT_DIR
-RUN mkdir -p ./build ./build/conf
 RUN cp ./meta-rzg2/docs/sample/conf/ek874/linaro-gcc/*.conf ./build/conf/
 
-CMD source ./poky/oe-init-build-env \
+CMD source poky/oe-init-build-env \
     build && bitbake linux-renesas -c fetch && bitbake core-image-weston
