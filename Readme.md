@@ -6,6 +6,12 @@ The purpose of this Dockerfile is to build the RZG2E images and store them on th
 
 This docker setup the yocto environment when the docker image is built. The yocto is built and output to the host in the host build directory when the docker run command below is called. A docker run for this image can take 3 - 6 hours depending on the Host PC used. When the container is complete it is existed and removed. The output persists in the build directory. 
 
+- #### Requirements
+
+  rzg2_bsp_eva_v102.tar.gz  - this is the Renesas Yocto archive for RZG2E. This can be found on the Renesas website [here](https://www.renesas.com/us/en/products/rzg-linux-platform/rzg-marcketplace/verified-linux-package.html).
+
+  start.sh - this script is used to setup tmux on the container.
+
 - ### Build the Image
 
 The build commnd below takes three arguments host_uid, host_id, and host user name. These are needed to setup a user account on the yocto image. Yocto Buildsystem requires user not root login. The --rm removes extra images craeted during build.
