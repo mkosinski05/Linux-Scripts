@@ -11,7 +11,7 @@ This docker setup the yocto environment when the docker image is built. The yoct
 The build commnd below takes three arguments host_uid, host_id, and host user name. These are needed to setup a user account on the yocto image. Yocto Buildsystem requires user not root login. The --rm removes extra images craeted during build.
 
     docker build --no-cache --rm --build-arg "host_uid=$(id -u)" \
-    --build-arg "user_name=$(whoami)"\
+    --build-arg "user_name=$(whoami)" \
     --build-arg "host_gid=$(id -g)" --tag "rzg2e_yocto:1.0" .
 
 - ### Run the image
@@ -20,7 +20,7 @@ The docker run commmand creates the docker executable container. This iniates a 
 
 This shoule be run where you want the yocto output to be or change the host mount directory.
 
-    docker run -it --rm --name rzg2e -v ./build:/home/$(whoami)/yocto/input/build rzg2e_yocto:1.0
+    docker run -it --rm --name rzg2e -v $PWD:/home/$(whoami)/yocto/build rzg2e_yocto:1.0
 
 ## Cleanup
 I added these helper commands for cleanup of extra containers and images due to errors in building and running docker image and container. Using the Dockerfile as is, these commands are not needed as the build and run commands cleanup the system. If changes are made to the Docker File 

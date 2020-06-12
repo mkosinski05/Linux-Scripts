@@ -38,9 +38,9 @@ RUN groupadd -g $host_gid $user_name && \
 USER $user_name
 
 ENV BUILD_INPUT_DIR /home/$user_name/yocto
-ENV BUILD_OUTPUT_DIR /home/$user_name/yocto/build
+#ENV BUILD_OUTPUT_DIR /home/$user_name/yocto/build
 RUN mkdir -p $BUILD_INPUT_DIR $BUILD_INPUT_DIR/proprietary
-RUN mkdir -p $BUILD_OUTPUT_DIR $BUILD_OUTPUT_DIR/conf
+#RUN mkdir -p $BUILD_OUTPUT_DIR $BUILD_OUTPUT_DIR/conf
 
 # Configure git using the login user name and gmiail
 # NOTE: this is required for yocto but does not need to be a real git account
@@ -58,7 +58,8 @@ WORKDIR $BUILD_INPUT_DIR/meta-rzg2
 RUN sh ./docs/sample/copyscript/copy_proprietary_softwares.sh ../proprietary
 
 WORKDIR $BUILD_INPUT_DIR
-RUN cp ./meta-rzg2/docs/sample/conf/ek874/linaro-gcc/*.conf ./build/conf/
+#RUN cp ./meta-rzg2/docs/sample/conf/ek874/linaro-gcc/*.conf ./build/conf/
+ENV TEMPLATECONF=/home/$user_name/yocto/meta-rzg2/docs/sample/conf/ek874/linaro-gcc/
 
 CMD source poky/oe-init-build-env \
     build && bitbake linux-renesas -c fetch && bitbake core-image-weston
