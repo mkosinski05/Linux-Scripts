@@ -1,14 +1,13 @@
 # Install Base Ubuntu Docker Image version 16.04
 # Yocto for RZG2E Requires ubuntu 16.04
-FROM ubuntu:16.04
-
+FROM ubuntu:20.04
 
 # Install the required software for yocto
-RUN apt-get update && apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib \
+RUN DEBIAN_FRONTEND="noninteractive" apt-get update && apt-get install -y gawk wget git-core diffstat unzip texinfo gcc-multilib \
 build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
 xz-utils debianutils iputils-ping libsdl1.2-dev xterm p7zip-full tar locales tmux
 
-RUN apt-get install -y autoconf2.13 clang llvm clang-3.9 llvm-3.9
+RUN DEBIAN_FRONTEND="noninteractive" apt-get install -y autoconf2.13 clang llvm clang-3.9 llvm-3.9
 
 # In Ubuntu, /bin/sh is a link to /bin/dash. The dash shell does not support the source command. However, 
 # we need the source command in the very last line of the Dockerfile. We replace dash by bash with
@@ -34,8 +33,11 @@ RUN echo $host_uid && echo $host_gid
 RUN groupadd -g $host_gid $user_name && \
     useradd -g $host_gid -m -s /bin/bash -u $host_uid $user_name
     
-ARG ver_bsp=v102
-RUN echo $ver_bsp  
+ARG ver_bsp=v1.1
+RUN echo $
+
+ARG gui_zip_file_name=RTK0EF0045Z13001ZJ-v0.51_EN
+ 
 # switches the user from root to $USER_NAME.    
 USER $user_name
 
@@ -50,19 +52,17 @@ RUN git config --global user.email "$user_name.gmail.com"
 RUN git config --global user.name $user_name
 
 WORKDIR $BUILD_INPUT_DIR
-ADD $PWD/rzg2_bsp_eva_$ver_bsp.tar.gz .
+ADD [--chown=$user_name:$user_name]$PWD/rzg2l_bsp_eva_$ver_bsp.tar.gz .
+ADD [--chown=$user_name:$user_name]$PWD/$gui_zip_file_name.zip .
 
-USER root
-RUN chown -R $host_uid:$host_gid .
+#USER root
+#RUN chown -R $host_uid:$host_gid .
 USER $user_name
 
-WORKDIR $BUILD_INPUT_DIR/meta-rzg2
-RUN sh ./docs/sample/copyscript/copy_proprietary_softwares.sh ../proprietary
+WORKDIR $BUILD_INPUT_DIR/$gui_zip_file_name/proprietary
+RUN sh ./copy_gfx_mmp.sh ../../meta-rzg2
 
-WORKDIR $BUILD_INPUT_DIR
-COPY start.sh start.sh
-
-ENV TEMPLATECONF=/home/$user_name/yocto/meta-rzg2/docs/sample/conf/ek874/linaro-gcc/
 
 #CMD source poky/oe-init-build-env build && bitbake linux-renesas -c fetch && bitbake core-image-weston
-ENTRYPOINT ["bash","./start.sh"]
+CMD source poky/oe-init-build-env build && bitbake core-image-weston
+#ENTRYPOINT ["bash","./start.sh"]
