@@ -1,5 +1,7 @@
 ### Sites
 
+The required packages to build the RZV2L images are listed below. The links are password protected and require Renesas Sales to access.
+
 [Linux BSP Package v0.8](https://renesasgroup.sharepoint.com/sites/RZG2LRZV2LProductTeam/Shared%20Documents/Forms/AllItems.aspx?csf=1&web=1&e=B9lPfn&cid=0d70f554%2Dfe42%2D4064%2D84d4%2D919eca584c07&FolderCTID=0x012000A9F4D5CD96A4824C87216C4E9E1382E4&id=%2Fsites%2FRZG2LRZV2LProductTeam%2FShared%20Documents%2FGeneral%2FRZV2L%2F2%2EProduct%2F3%2ESoftware%2FRelease%2FRelease%5FPackage%2F2nd%5Frelease&viewid=e306ee10%2De545%2D4d46%2Dab46%2D4823744ef300)
 
 [DRP-AI Support Package v0.90](https://renesasgroup.sharepoint.com/sites/RZG2LRZV2LProductTeam/Shared%20Documents/Forms/AllItems.aspx?csf=1&web=1&e=B9lPfn&cid=0d70f554%2Dfe42%2D4064%2D84d4%2D919eca584c07&FolderCTID=0x012000A9F4D5CD96A4824C87216C4E9E1382E4&id=%2Fsites%2FRZG2LRZV2LProductTeam%2FShared%20Documents%2FGeneral%2FRZV2L%2F2%2EProduct%2F3%2ESoftware%2FRelease%2FRelease%5FPackage%2F2nd%5Frelease&viewid=e306ee10%2De545%2D4d46%2Dab46%2D4823744ef300)
@@ -10,7 +12,13 @@
 
 ### Build
 
+- Execute rzv2l_env.sh script. The script extracts zip files and the extracts the required archve files.
+- Run the rzv2l_build.sh. This script builds the environment. This is includes Linux BSP, DRP-AI, RZG2L Mali, and codec.
+- (Optional) rzv2l_clean.sh: This script removes the work directory and extracted files in step 1.
+
 ###  SDK
+
+These steps show how to setup the SDK for developing embedded applications. 
 
 ##### Build SDK
 
@@ -34,6 +42,8 @@ sudo sh poky-glibc-x86_64-core-image-weston-aarch64-smarc-rzv2l-toolchain-3.1.5.
 
 ##### Enable SDK
 
+This command needs to be executed every time before development. Closing the terminal window with end the enviroment. 
+
 ```
 source /opt/poky/3.1.5/environment-setup-aarch64-poky-linux
 ```
@@ -49,8 +59,8 @@ aarch64-poky-linux-gcc -mcpu=cortex-a55 -fstack-protector-strong -D_FORTIFY_SOUR
 
 **RZV2L BSP Configurations**
 
-- TARGET_SYS	aarch64-poky-linux
-- MACHINE         smarc-rzv2l
+- TARGET_SYS	**aarch64-poky-linux**
+- MACHINE         **smarc-rzv2l**
 
 **Step 1.** You can find the Yocto Project recipes from [Yocto Open Embedded Recipe Website](https://layers.openembedded.org/layerindex/branch/master/layers/). From this page select recipe tab. Then enter the package you are looking for in the search bar. Use the name in the Recipe Name column in the following steps( i.e. openssl ).
 
@@ -58,6 +68,8 @@ aarch64-poky-linux-gcc -mcpu=cortex-a55 -fstack-protector-strong -D_FORTIFY_SOUR
 
 ```
 CORE_IMAGE_EXTRA_INSTALL += "<package_name>"
+or
+IMAGE_INSTALL_append = "<package_name>"
 ```
 
 **Step 3.**  Build the yocto image and sdk.
@@ -67,18 +79,25 @@ bitbake core-image-weston
 bitbake core-image-weston -c populate_sdk
 ```
 
-**Step 4.**  Verify package is added. If the example adds openssl.
+**Step 4a.**  Verify package is added. If the example adds openssl.
 
 ```
 ls ./tmp/work/$TARGET_SYS/openssh
 .. list all openssl files
 ```
 
-**Step 5.**  Check the generated root file system
+**Step 4b.**  Check the generated root file system
 
 ```
 find ./tmp/work/$MACHINE-poly-linux/core-image-weston/1.0-r0/rootfs -name sshd
-.. list the package installation location
+.. list the package installation location in rootfs
+```
+
+**Step 4c.**  Check the SDK package
+
+```
+find ./tmp/work/$MACHINE-poly-linux/core-image-weston/1.0-r0/sdk -name sshd
+.. list the package installation location in the SDK
 ```
 
 
