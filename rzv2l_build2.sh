@@ -30,22 +30,17 @@ sh docs/template/copyscript/copy_proprietary_software_omx.sh $BINDIR
 cd $WORK_DIR
 tar -xvf ../rzv2l_meta-drpai_ver0.90.tar.gz
 
-### Copy/Move the 'ISP Package' package file (rzv2l_meta-isp_ver0.50.tar.gz) under the BSP directory.
-### After exacting using the command below, this will add a new directory "meta-isp" and file "rzv2l-isp-conf.patch"
-cd $WORK_DIR
-tar -xvf ../rzv2l_meta-isp_ver0.50.tar.gz -C .
-
 ### Set up the Yocto Environment and copy a default configuration
 cd $WORK_DIR
 source poky/oe-init-build-env
+ls ../
 cp ../meta-rzv/docs/template/conf/smarc-rzv2l/*.conf ./conf/
 
-
-
-### Copy/Move the 'ISP Package' file (rzv2l_isp-sample-application_ver0.50.tar.gz) under the BSP directory.
-### After exacting using the command below, this will add a new directory "meta-isp" and file "rzv2l-isp-conf.patch"
-cd $WORK_DIR
-tar -zxvf ./rzv2l_meta-isp_ver0.50.tar.gz
+### Copy/Move the 'Codec Library' package file (RTK0EF0045Z15001ZJ_0_4_0.tar.bz2) under the BSP directory.
+tar -xvf RTK0EF0045Z15001ZJ_0_4_0.tar.bz2
+cd meta-rzv
+sh docs/template/copyscript/copy_proprietary_software_omx.sh  ../RTK0EF0045Z15001ZJ_0_4_0
+cd ..
 
 ### Initialize Yocto Environment and copy prepared configuration files
 source poky/oe-init-build-env
@@ -54,10 +49,6 @@ cp ../meta-rzv/docs/template/conf/smarc-rzv2l/*.conf ./conf/
 ### Apply the patch from the 'DRP-AI Support' package
 ### (the current directory should still be the 'build' directory)
 patch -p2 < ../rzv2l-drpai-conf.patch
-
-### Apply the patch from the 'ISP' package
-### (the current directory should still be the 'build' directory)
-patch -p2 < ../rzv2l-isp-conf.patch
 
 ### Build
 bitbake core-image-weston

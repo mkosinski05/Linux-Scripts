@@ -20,27 +20,27 @@ The required packages to build the RZV2L images are listed below. The links are 
 
 These steps show how to setup the SDK for developing embedded applications. 
 
-##### Build SDK
+##### 1. Build SDK
 
 ```
 bitbake core-image-weston -c populate_sdk
 ```
 
-##### Install SDK  ( core-image-minimal )
+##### 2. Install SDK  ( core-image-minimal )
 
 ```
 cd ~/user_work/build/tmp/deploy/sdk
 sudo sh poky-glibc-x86_64-core-image-minimal-aarch64-smarc-rzv2l-toolchain-3.1.5.sh
 ```
 
-##### Install SDK ( core-image-weston )
+##### 2. Install SDK ( core-image-weston )
 
 ```
 cd ~/user_work/build/tmp/deploy/sdk
 sudo sh poky-glibc-x86_64-core-image-weston-aarch64-smarc-rzv2l-toolchain-3.1.5.sh
 ```
 
-##### Enable SDK
+##### 3. Enable SDK
 
 This command needs to be executed every time before development. Closing the terminal window with end the enviroment. 
 
@@ -48,10 +48,10 @@ This command needs to be executed every time before development. Closing the ter
 source /opt/poky/3.1.5/environment-setup-aarch64-poky-linux
 ```
 
-##### Verify SDK 
+##### 4. Verify SDK 
 
 ```
-echo $cc
+echo $CC
 aarch64-poky-linux-gcc -mcpu=cortex-a55 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/opt/poky/3.1.5/sysroots/aarch64-poky-linux
 ```
 
@@ -90,14 +90,52 @@ ls ./tmp/work/$TARGET_SYS/openssh
 
 ```
 find ./tmp/work/$MACHINE-poly-linux/core-image-weston/1.0-r0/rootfs -name sshd
-.. list the package installation location in rootfs
+.. list of the package installation location in rootfs
 ```
 
 **Step 4c.**  Check the SDK package
 
 ```
 find ./tmp/work/$MACHINE-poly-linux/core-image-weston/1.0-r0/sdk -name sshd
-.. list the package installation location in the SDK
+.. list of the package installation location in the SDK
+```
+
+#### Reference
+
+- [Yocto Adding Package](https://wiki.yoctoproject.org/wiki/Cookbook:Example:Adding_packages_to_your_OS_image)
+- [Yocto Open Embedded Recipe Website](https://layers.openembedded.org/layerindex/branch/master/layers/)
+
+### SDK Application Makefile
+
+##### Set Include directories from the SDK root file system. 
+
+```
+OPENCV_LINK = -isystem ${SDKTARGETSYSROOT}/usr/include/opencv4 \
+			  -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -lopencv_highgui
+```
+
+Here is an example of linking the opencv verion 4 to the application build. The key thing to note here is the variable ***${SDKTARGETSYSROOT}***. This variable specifies the location of the target root file system used for the SDK. This variable created when the SDK section 4.
+
+##### Statically Link BSP libraries.
+
+```
+BSP_080_SDK_FLAG = \
+			  -ljpeg -lwebp -ltiff -lz -ltbb -lgtk-3 -lpng16 -lgdk-3 -lcairo  \
+			  -llzma -lrt -lcairo-gobject \
+			  -lxkbcommon -lwayland-cursor -lwayland-egl -lwayland-client -lepoxy \
+			  -lfribidi -lharfbuzz -lfontconfig \
+			  -lglib-2.0 -lgobject-2.0 -lgdk_pixbuf-2.0 -lgmodule-2.0 -lpangocairo-1.0 \
+			  -latk-1.0 -lgio-2.0 -lpango-1.0 -lfreetype -lpixman-1 -luuid -lpcre \
+			  -lmount -lresolv -lexpat -lpangoft2-1.0 -lblkid \
+```
+
+##### Compile 
+
+```
+${CXX} -std=c++14 sample_app_resnet50_cam.cpp camera.cpp image.cpp wayland.cpp \
+	-lwayland-client \
+	${OPENCV_LINK} ${BSP_080_SDK_FLAG} \
+	-lpthread -O2 -ldl ${LDFLAGS} -o sample_app_resnet50_cam
 ```
 
 
