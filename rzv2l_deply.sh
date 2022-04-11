@@ -1,5 +1,5 @@
 # Change to the Yocto output directory that contains the files
-cd rzv2l_bsp_v0.8/build/tmp/deploy/images/smarc-rzv2l
+cd bsp/build/tmp/deploy/images/smarc-rzv2l
 
 # Copy the Linux kernel and Device Tree to partition 1
 sudo cp -v Image /media/$USER/RZ_FAT
