@@ -1,4 +1,6 @@
 
+# https://github.com/Avnet/meta-rzboard
+
 pushd ${SRC_DIR}
 LinuxBSP=`find ${SRC_DIR} -name RTK0EF0045Z0024AZJ* -printf "%f\n"`
 
@@ -9,9 +11,11 @@ DRP=`find ${SRC_DIR} -name r11an0549ej* -printf "%f\n"`
 CM33=`find ${SRC_DIR} -name r01an6238ej* -printf "%f\n"`
 popd
 
-#ISP_ENABLED=0
-#EDGEE_ENABLED=0
+
 echo "##############################################################################################"
+
+
+echo "Avnet RZBOARD"
 
 echo "Work Directory : ${WORK_DIR}"
 echo " Packages :"
@@ -25,6 +29,22 @@ echo ${CM33}
 
 mkdir $WORK_DIR
 echo "##############################################################################################"
+
+function remove_redundant_patches(){
+	# remove linux patches that were merged into the Avnet kernel
+	flist=$(find ${YOCTO_HOME} -name "linux-renesas_*.bbappend")
+	for ff in ${flist}
+	do
+		echo ${ff}
+		rm -rf ${ff}
+	done
+
+	# remove u-boot patches
+	find ${YOCTO_HOME} -name "u-boot_*.bbappend" -print -exec rm -rf {} \;
+
+	# remove tfa patches
+	find ${YOCTO_HOME} -name "trusted-firmware-a.bbappend" -print -exec mv {} {}.remove \;
+}
 
 ### Extract the BSP Linux package
 cd $WORK_DIR 
@@ -71,10 +91,15 @@ fi
 cd $WORK_DIR
 sed -i '/demos.inc/a include ${LAYERDIR}/include/openamp/openamp.inc' ./meta-rz-features/conf/layer.conf
 
+remove_redundant_patches
+
+# Setup Avnet Board
+git clone https://github.com/Avnet/meta-rzboard.git -b rzboard_dunfell_5.10
+
 ### Set up the Yocto Environment and copy a default configuration
 cd $WORK_DIR
 source poky/oe-init-build-env
-cp ../meta-renesas/docs/template/conf/smarc-rzv2l/*.conf ./conf
+cp ../meta-rzboard/conf/rzboard/*.conf ./conf
 
 echo -e "DL_DIR = \"${DL_DIR}\"\n" >> conf/local.conf
 echo -e "INHERIT += \"rm_work\"\n" >> conf/local.conf
@@ -92,8 +117,8 @@ if [[ $EDGEE_ENABLED -eq 1 ]]; then
 fi
 
 ### Build
-#bitbake core-image-weston
-#bitbake core-image-weston -c populate_sdk
+bitbake avnet-core-image
+bitbake avnet-core-image -c populate_sdk
 
 echo rm -rfd drp drp ${LinuxBSP::-4} ${VideoCodec::-4} ${Graphics::-4} ${ISP::-4} ${CM33::-4} 
 cd $WORK_DIR
