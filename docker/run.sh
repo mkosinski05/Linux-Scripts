@@ -9,6 +9,8 @@ docker run -it \
   --volume="${SRC_DIR}:/home/${USER}/source" \
   --volume="${OSS_DIR}:/home/${USER}/oss_package" \
   --workdir="/home/${USER}/yocto" \
-  rzv2ma_yocto:1.00
+  rzv2_yocto:1.00
   
 docker container prune -f
+
+# ./Scripts/build.sh -b test -w /home/zkmike/yocto/ -s /home/zkmike/source/ -d /home/zkmike/oss_package/

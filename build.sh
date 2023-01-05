@@ -2,7 +2,6 @@
 SRCDIR=/media/zkmike/RZ/RZV2L
 DL_DIR=/home/zkmike/workspace/yocto/oss_package
 WORKDIR=~/workspace/yocto/RZV2L
-DL_DIR=/home/zkmike/workspace/yocto/oss_package
 
 BOARD=test
 EDGE_IMPULSE_ENABLED=0
@@ -30,10 +29,10 @@ setboard () {
 
 usage () {
 	echo "Enter following Options"
-	echo "-b board name (rzv2l rzboard) sets the subdirectory for Working Directory"
-	echo "-w sets Working base directory"
-	echo "-d Download Directory"
-	echo "-s Sopurce Directory"
+	echo "-b board name (rzv2l rzboard) sets the subdirectory for Working Directory ( Default ${BOARD}}"
+	echo "-w sets Working base directory ( Default ${WORKDIR}}"
+	echo "-d Download Directory ( Default ${DL_DIR}}"
+	echo "-s Source Directory ( Default ${SRCDIR}}"
 	echo "-e Enable Edge Impulse"
 	echo "-i Enables Sippe ISP Support"
 	exit 0
