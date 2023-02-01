@@ -1,5 +1,8 @@
 # Change to the Yocto output directory that contains the files
-cd bsp/build/tmp/deploy/images/smarc-rzv2l
+cd $1
+echo $1
+
+cd build/tmp/deploy/images/smarc-rzv2l
 
 # Copy the Linux kernel and Device Tree to partition 1
 sudo cp -v Image /media/$USER/RZ_FAT
@@ -9,5 +12,4 @@ sudo cp -v r9a07g054l2-smarc.dtb /media/$USER/RZ_FAT
 sudo tar -xvf core-image-weston-smarc-rzv2l.tar.gz   -C /media/$USER/RZ_ext
 
 # Make sure all files are finished writing before removing the USB card reader from the PC
-sync
-    
+sync 

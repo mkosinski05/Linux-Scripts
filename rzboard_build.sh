@@ -105,20 +105,27 @@ echo -e "DL_DIR = \"${DL_DIR}\"\n" >> conf/local.conf
 echo -e "INHERIT += \"rm_work\"\n" >> conf/local.conf
 echo -e "IMAGE_FSTYPES_remove += \"ext4\"\n" >> conf/local.conf
 
+# Add support for LVGL GUI
+echo -e "IMAGE_INSTALL_append = \" libsdl2-dev\""  >> conf/local.conf
+
+echo "TOOLCHAIN_TARGET_TASK += \"kernel-devsrc\"" >> ./conf/local.conf
+
 if [[ $EDGEE_ENABLED -eq 1 ]]; then
 	mv -n ../meta-renesas/include/core-image-bsp.inc ../meta-renesas/include/core-image-bsp.inc_org
 
 	grep -v "lttng" ../meta-renesas/include/core-image-bsp.inc_org >> ../meta-renesas/include/core-image-bsp.inc
 
 	sed -i 's/CIP_CORE = \"1\"/CIP_CORE = \"0\"/' ./conf/local.conf
-	echo -e "IMAGE_INSTALL_append = \" nodejs nodejs-npm \""
-	echo -e "BBMASK = \"meta-renesas/recipes-common/recipes-debian\""
+	echo -e "IMAGE_INSTALL_append = \" nodejs nodejs-npm \"" >> ./conf/local.conf
+	echo -e "BBMASK = \"meta-renesas/recipes-common/recipes-debian\"" >> ./conf/local.conf
 
 fi
 
+if [[ $ENABLE_BUILD -eq 1 ]]; then
 ### Build
 bitbake avnet-core-image
 bitbake avnet-core-image -c populate_sdk
+fi
 
 echo rm -rfd drp drp ${LinuxBSP::-4} ${VideoCodec::-4} ${Graphics::-4} ${ISP::-4} ${CM33::-4} 
 cd $WORK_DIR
