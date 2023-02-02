@@ -7,18 +7,19 @@ SRC=/media/zkmike/RZ/RZV2L
 unzip $SRC/*translator.zip -d translator
 chmod +x ./translator/DRP-AI_Translator-v1.81-Linux-x86_64-Install
 ./translator/DRP-AI_Translator-v1.81-Linux-x86_64-Install
+rm -rfd translator
 
 # Build image/SDK according to the DRP-AI Support Package Release Note to generate following files.
 if [[ -d "/opt/poky" ]]; then
 
-	SDKS=`ls /opt/poky`
-	if [[ #SDKS[@] -eq 0 ]]; then
+	SDKS=(`find /opt/poky/ -maxdepth 1 -type d -printf '%P\n'`)
+	if [[ ${#SDKS[@]} -le 1 ]]; then
 		echo "No SDK installed"
-		exit
+		return 0
 	fi
 else
 	echo "No SDK installed"
-	exit
+	return 0
 fi
 
 # Step 2. Clone the repository
@@ -52,8 +53,9 @@ if [ ! -d "/opt/onnxruntime-linux-x64-1.8.1" ]; then
 fi
 
 # Step 5.  Setup DRP-AI TVM1 environment
-cd <.../drp-ai_tvm>
+pushd drp-ai_tvm
 bash setup/make_drp_env.sh
+popd 
 
 # Step 6. Create Symblic Links
 # Setup AI Translator 
