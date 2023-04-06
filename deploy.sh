@@ -5,9 +5,16 @@ CONFIGFILE=example_config.ini
 KERNELFILE=Image
 DTBFILE=r9a07g054l2-smarc.dtb
 FILESYSTEM=core-image-weston-smarc-rzv2l.tar.gz
+SDKSCRIPT=poky-glibc-x86_64-core-image-weston-aarch64-smarc-rzv2l-toolchain-3.1.17.sh
 
 DEPLOYDIR=build/tmp/deploy/images/
+SDKDIR=build/tmp/deploy/sdk
 IMAGENAME=smarc-rzv2l
+
+echo "Do You want to deply SDCard Images? (yes/no)"
+read question
+if [[ "yes" == ${question} ]]; then
+
 
 if [ ! -f ${CREATEIMAGEFIlE} ]; then
 	ln -s /home/zkmike/Scripts/rzg2_bsp_scripts/image_creator/create_image.sh .
@@ -92,4 +99,40 @@ do
 done
 rm ${CONFIGFILE}
 rm ${CREATEIMAGEFIlE}
+fi
+
+
+
+
+
+
+echo "------------------------------------------------------------------"
+echo "          				Deply SDKs"
+echo "------------------------------------------------------------------"
+echo "Do You want to deply SDK? (yes/no)"
+read question
+if [[ "no" == ${question} ]]; then
+	return 0
+fi
+
+sudo rm -rfd /opt/poky 
+
+WORKDIRS=`ls -d */`
+
+delete=(Scripts/ sd_card_image/)
+
+for del in ${delete[@]}
+do
+   WORKDIRS=("${WORKDIRS[@]/$del}")
+done
+
+for WORKDIR in ${WORKDIRS}
+do
+	pushd ${PWD}/${WORKDIR}${SDKDIR}
+	echo $WORKDIR
+	sh ${SDKSCRIPT}
+	popd
+done
+
+
 
