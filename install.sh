@@ -5,8 +5,9 @@ SRC=/media/zkmike/RZ/RZV2L
 # Linux Package can be found in the page of DRP-AI Support Package.
 
 unzip $SRC/*translator.zip -d translator
-chmod +x ./translator/DRP-AI_Translator-v1.81-Linux-x86_64-Install
-./translator/DRP-AI_Translator-v1.81-Linux-x86_64-Install
+TRANS_Install=`find ./translator -name *-Linux-x86_64-Install`
+chmod +x ./translator/${TRANS_Install}
+./translator/${TRANS_Install}
 rm -rfd translator
 
 # Build image/SDK according to the DRP-AI Support Package Release Note to generate following files.
@@ -38,7 +39,6 @@ apt update
 DEBIAN_FRONTEND=noninteractive apt install -y build-essential cmake \
 libomp-dev libgtest-dev libgoogle-glog-dev libtinfo-dev zlib1g-dev libedit-dev \
 libxml2-dev llvm-8-dev g++-9 gcc-9 wget
-
 apt-get install -y python3-pip
 pip3 install --upgrade pip
 apt-get -y install unzip vim
