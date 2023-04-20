@@ -100,12 +100,18 @@ if [[ $EDGEE_ENABLED -eq 1 ]]; then
 
 fi
 
+if [[ ${ENABLE_DEBUG} -eq 1 ]] ; then
+	sed -i '/INCOMPATIBLE_LICENSE/d' ./conf/local.conf
+	echo -e "IMAGE_INSTALL_append = \" rpm openssh openssh-sftp-server openssh-scp gdbserver\"" >> ./conf/local.conf
+	echo -e "PACKAGE_EXCLUDE += \" packagegroup-core-ssh-dropbear\"" >> ./conf/local.conf
+fi
+
 if [[ $ENABLE_BUILD -eq 1 ]]; then
 ### Build
-bitbake core-image-weston
+#bitbake core-image-weston
 
 echo "TOOLCHAIN_TARGET_TASK += \"kernel-devsrc\"" >> ./conf/local.conf
-
+#
 bitbake core-image-weston -c populate_sdk
 fi
 

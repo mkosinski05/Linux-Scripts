@@ -1,4 +1,0 @@
-sed 's/DL_DIR = \"${TOPDIR}\/downloads\"/DL_DIR = \"'"${DL_DIR}"'\"/' conf/local.conf 
-sed: -e expression #1, char 49: unknown option to `s'
-
-sed s/DL_DIR = \"${TOPDIR}\/downloads\"/DL_DIR = \"/home/zkmike/workspace/yocto/oss_package\"/ conf/local.conf

@@ -8,6 +8,8 @@ EDGE_IMPULSE_ENABLED=0
 SIMPLE_ISP_ENABLED=0
 ENABLE_BUILD=1
 ENABLE_AI=0
+ENABLE_DEBUG=0
+
 
 setboard () {
 
@@ -38,9 +40,10 @@ setboard () {
 usage () {
 	echo "Enter following Options"
 	echo "-b board name (rzv2l rzboard) sets the subdirectory for Working Directory ( Default ${BOARD}}"
-	echo "-w sets Working base directory ( Default ${WORKDIR}}"
+	echo "-w sets Working BASE directory ( Default ${WORKDIR}} Board setting will create Subdirectory"
 	echo "-d Download Directory ( Default ${DL_DIR}}"
 	echo "-s Source Directory ( Default ${SRCDIR}}"
+	echo "-j Debug Support Adds GDB and OpenSSL"
 	echo "-e Enable Edge Impulse"
 	echo "-i Enables Sippe ISP Support"
 	echo "-t Disables Build"
@@ -50,13 +53,17 @@ usage () {
 
 
 if [[ $# -gt 0 ]]; then
-	while getopts 'b:w:d:s:eita:h' c
+	while getopts 'b:w:d:s:jeita:h' c
 	do
 	  case $c in
 		b) setboard $OPTARG ;;
 		d) DL_DIR=$OPTARG ;;
 		w) WORKDIR=$OPTARG ;;
 		s) SRCDIR=$OPTARG ;;
+		j)
+			echo "Enable Debug"
+			ENABLE_DEBUG=1
+			;;
 		e) 
 			echo "Edge Enabled" 
 			EDGE_IMPULSE_ENABLED=1
@@ -109,7 +116,15 @@ export EDGEE_ENABLED=${EDGE_IMPULSE_ENABLED}
 export DL_DIR=${DL_DIR}
 export ENABLE_BUILD=${ENABLE_BUILD}
 export ENABLE_AI_FRAMEWORK=${ENABLE_AI}
+export ENABLE_DEBUG=${ENABLE_DEBUG}
 
+echo "##############################################################################################"
+echo "			Build Configs"
+echo " Work Dir $WORK_DIR"
+echo " Source Directory: $SRC_DIR"
+echo " Download Directory: $DL_DIR"
+echo ""
+echo "##############################################################################################"
 my_dir="$(dirname "$0")"
 if [[ ${BOARD} == *"rzv2l"* ]]; then
 	bash ${my_dir}/rzv2l_build.sh

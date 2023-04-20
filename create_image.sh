@@ -1,1 +1,0 @@
-/home/zkmike/Scripts/rzg2_bsp_scripts/image_creator/create_image.sh
