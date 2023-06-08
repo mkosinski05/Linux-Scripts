@@ -24,6 +24,11 @@ rm compile_onnx_model_app.py
 fi
 
 sed "s/0x438E0000/${ADDR_MAP}/" compile_onnx_model.py > compile_onnx_model_app.py
+
+echo "###############################################################################"
+echo "The Product ${PRODUCT} address map is set to : "
+grep addr_map_start compile_onnx_model_app.py
+echo "###############################################################################"
 python3 compile_onnx_model_app.py \
     ./resnet18-v1-7.onnx \
     -o resnet18_onnx \
@@ -39,9 +44,10 @@ cd $TVM_ROOT/apps/
 pwd
 if [ -d $TVM_ROOT/apps/build ]; then
     rm -rfd $TVM_ROOT/apps/build
-else
-    mkdir $TVM_ROOT/apps/build
 fi
+
+mkdir $TVM_ROOT/apps/build
+
 
 cd $TVM_ROOT/apps/build
 pwd
