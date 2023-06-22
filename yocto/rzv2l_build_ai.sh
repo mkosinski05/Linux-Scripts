@@ -1,6 +1,5 @@
 SRC_DIR=/home/zkmike/source
 DL_DIR=/home/zkmike/oss_package
-DL_DIR=/home/zkmike/downloads
 
 pushd ${SRC_DIR}
 LinuxBSP=`find ${SRC_DIR} -name RTK0EF0045Z0024AZJ* -printf "%f\n"`
@@ -16,7 +15,7 @@ ENABLE_BUILD=$2
 ISP_ENABLED=0
 EDGEE_ENABLED=0
 ENABLE_AI_FRAMEWORK=0
-
+ENABLE_AI_FRAMEWORK=1
 echo "##############################################################################################"
 
 echo "Work Directory : ${WORK_DIR}"
@@ -73,21 +72,16 @@ if [[ $ISP_ENABLED -eq 1 ]]; then
 	tar -zxvf ./${ISP::-4}/meta-rz-features.tar.gz
 fi
 
-if [[ ENABLE_AI_FRAMEWORK -gt 0 ]]; then
-	git clone https://github.com/mkosinski05/meta-renesas-ai.git
-fi
-
 ## Reinsert the MultiOS recipe into the meta-rz-features/conf/layers.conf
 cd $WORK_DIR
 sed -i '/demos.inc/a include ${LAYERDIR}/include/openamp/openamp.inc' ./meta-rz-features/conf/layer.conf
 
 ### Set up the Yocto Environment and copy a default configuration
-echo $WORK_DIR
 cd $WORK_DIR
-pwd
-source poky/oe-init-build-env
-cp ../meta-renesas/docs/template/conf/smarc-rzv2l/*.conf ./conf/
 
+source poky/oe-init-build-env
+pwd
+cp ../meta-renesas/docs/template/conf/smarc-rzv2l/*.conf ./conf/
 
 echo -e "DL_DIR = \"${DL_DIR}\"\n" >> conf/local.conf
 echo -e "INHERIT += \"rm_work\"\n" >> conf/local.conf
@@ -99,6 +93,7 @@ echo -e "IMAGE_FSTYPES_remove += \"ext4\"\n" >> conf/local.conf
 echo -e "IMAGE_INSTALL_append = \" libsdl2-dev\""  >> conf/local.conf
 
 if [[ $EDGEE_ENABLED -eq 1 ]]; then
+    echo "ENABLE EDGE IMPULSE"
 	mv -n ../meta-renesas/include/core-image-bsp.inc ../meta-renesas/include/core-image-bsp.inc_org
 
 	grep -v "lttng" ../meta-renesas/include/core-image-bsp.inc_org >> ../meta-renesas/include/core-image-bsp.inc
@@ -110,9 +105,38 @@ if [[ $EDGEE_ENABLED -eq 1 ]]; then
 fi
 
 if [[ ${ENABLE_DEBUG} -eq 1 ]] ; then
+    echo "ENABLE dEBUGGING"
 	sed -i '/INCOMPATIBLE_LICENSE/d' ./conf/local.conf
 	echo -e "IMAGE_INSTALL_append = \" rpm openssh openssh-sftp-server openssh-scp gdbserver\"" >> ./conf/local.conf
 	echo -e "PACKAGE_EXCLUDE += \" packagegroup-core-ssh-dropbear\"" >> ./conf/local.conf
+fi
+
+if [[ $ENABLE_AI_FRAMEWORK -eq 1 ]]; then
+    echo "ENABLE AI FRAMEWORKS"
+    # Dwonload meta-renesas-ai
+    #git clone https://github.com/mkosinski05/meta-renesas-ai.git ../
+    unzip ${SRC_DIR}/meta-renesas-ai-master.zip -d ${WORK_DIR}
+    mv ${WORK_DIR}/meta-renesas-ai-master ${WORK_DIR}/meta-renesas-ai
+    
+    # Add layer
+    ## bitbake-layers add-layer ${WORK_DIR}/meta-renesas-ai 
+    sed -i '/.*meta-multimedia.*/a\  ${TOPDIR}/../meta-openembedded/meta-renesas-ai \\' ./conf/bblayers.conf
+    
+    # Modifiy recipes to support RZV2L
+    sed  -i 's/smarc-rzg2l|/&smarc-rzv2l|/' ${WORK_DIR}/meta-renesas-ai/recipes-mathematics/arm-compute-library/arm-compute-library_22.02.bb
+    sed -i '/.*smarc-rzg2lc.*/a OESCONS_COMMON_FLAG_append_smarc-rzv2l = " opencl=1 embed_kernels=1 arch=armv8.2-a"'  ${WORK_DIR}/meta-renesas-ai/recipes-mathematics/arm-compute-library/arm-compute-library_22.02.bb
+    sed -i '/.*smarc-rzg2lc.*/a EXTRA_OECMAKE_append_smarc-rzv2l = "-DARMCOMPUTECL=1"'  ${WORK_DIR}/meta-renesas-ai/recipes-mathematics/armnn/armnn_22.02.bb
+    
+    sed -i 's/CIP_MODE = "Buster"/CIP_MODE = "None"/g' ./conf/local.conf
+    # Add AI packages to local.conf
+    echo 'IMAGE_INSTALL_append = " armnn-dev armnn-examples armnn-tensorflow-lite-dev armnn-onnx-dev armnn-onnx-examples tensorflow-lite-python"' >> ./conf/local.conf
+    
+    # Add Bencmarks
+    echo 'IMAGE_INSTALL_append = " tensorflow-lite-staticdev tensorflow-lite-dev tensorflow-lite-benchmark armnn-benchmark"' >> ./conf/local.conf
+    
+    echo 'IMAGE_INSTALL_append = " tensorflow-lite-delegate-benchmark"' >> ./conf/local.conf
+
+
 fi
 
 if [[ $ENABLE_BUILD -eq 1 ]]; then

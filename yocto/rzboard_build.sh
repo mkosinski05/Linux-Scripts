@@ -1,5 +1,11 @@
 
 # https://github.com/Avnet/meta-rzboard
+SRC_DIR=/home/zkmike/source
+DL_DIR=/home/zkmike/oss_package
+WORK_DIR=/home/zkmike/yocto/AVNET
+EDGEE_ENABLED=0
+ENABLE_BUILD=1
+
 
 pushd ${SRC_DIR}
 LinuxBSP=`find ${SRC_DIR} -name RTK0EF0045Z0024AZJ* -printf "%f\n"`
