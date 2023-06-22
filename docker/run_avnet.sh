@@ -5,7 +5,7 @@ OSS_DIR=/home/zkmike/workspace/yocto/oss_package
 docker container prune -f
 
 docker run -it \
-  --name=rzv2l \
+  --name=avnet \
   --volume="${HOST_DIR}:/home/${USER}/yocto" \
   --volume="${SRC_DIR}:/home/${USER}/source" \
   --volume="${OSS_DIR}:/home/${USER}/oss_package" \
