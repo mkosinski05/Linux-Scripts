@@ -1,5 +1,6 @@
 SRC_DIR=/home/zkmike/source
 DL_DIR=/home/zkmike/oss_package
+WORK_DIR=${PWD}/rzg2l
 
 pushd ${SRC_DIR}
 LinuxBSP=`find ${SRC_DIR} -name RTK0EF0045Z0021AZJ-* -printf "%f\n"`
@@ -9,9 +10,9 @@ popd
 
 echo "##############################################################################################"
 
-ENABLE_AI_FRAMEWORK=1
+ENABLE_AI_FRAMEWORK=0
 
-WORK_DIR=${PWD}/$1
+
 
 echo "Work Directory : ${WORK_DIR}"
 echo " Packages :"
@@ -59,7 +60,7 @@ if [ -f "${SRC_DIR}/${LinuxBSP}" ]; then
     bitbake-layers add-layer ../meta-rz-features/meta-rz-codecs
     bitbake-layers add-layer ../meta-qt5
 
-	#echo -e "DL_DIR = \"${DL_DIR}\"\n" >> conf/local.conf
+	echo -e "DL_DIR = \"${DL_DIR}\"\n" >> conf/local.conf
 	echo -e "INHERIT += \"rm_work\"\n" >> conf/local.conf
 	echo -e "IMAGE_FSTYPES_remove += \"ext4\"\n" >> conf/local.conf
 
@@ -90,7 +91,7 @@ if [ -f "${SRC_DIR}/${LinuxBSP}" ]; then
     fi
 	### Build
 	MACHINE=smarc-rzg2l  bitbake core-image-weston
-	bitbake core-image-bsp -c populate_sdk
+	MACHINE=smarc-rzg2l bitbake core-image-weston -c populate_sdk
 
 	echo rm -rfd drp ${LinuxBSP::-4} ${VideoCodec::-4} Codec ${Graphic::-4}
 

@@ -1,6 +1,6 @@
 SRC_DIR=/media/zkmike/RZ/RZG2L
 HOST_DIR=/home/zkmike/workspace/yocto/RZG2L
-OSS_DIR=/home/zkmike/workspace/yocto/RZG2L/oss_package
+OSS_DIR=/home/zkmike/workspace/yocto/oss_package_rzg
 
 docker container prune -f
 
