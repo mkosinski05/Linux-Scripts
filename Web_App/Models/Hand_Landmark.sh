@@ -10,7 +10,7 @@ cd  $TVM_ROOT/how-to/sample_app/docs/hand_landmark_localization
 ###############################################################################
 
 git clone -b v0.28.1 https://github.com/open-mmlab/mmpose.git
-if [[ !-f hrnetv2_w18_coco_wholebody_hand_256x256-1c028db7_20210908.pth ]]; then
+if [[ ! -f hrnetv2_w18_coco_wholebody_hand_256x256-1c028db7_20210908.pth ]]; then
     wget https://download.openmmlab.com/mmpose/hand/hrnetv2/hrnetv2_w18_coco_wholebody_hand_256x256-1c028db7_20210908.pth
     #wget https://github.com/open-mmlab/mmpose/blob/v0.28.1/configs/hand/2d_kpt_sview_rgb_img/topdown_heatmap/coco_wholebody_hand/hrnetv2_w18_coco_wholebody_hand_256x256.py
 fi

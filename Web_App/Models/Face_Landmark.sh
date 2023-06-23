@@ -25,7 +25,7 @@ fi
 ###############################################################################
 #   Prepare TVM Translator Scripts for CPU only trans
 ###############################################################################
-
+cd $TVM_ROOT/tutorials
 sed "s/import.*onnx/import torch/" compile_cpu_only_onnx_model.py > compile_cpu_only_pytorch_model.py
 
 sed -i "s/shape_dict =.*/model = torch.jit.load(model_file)\n    model.eval()/" compile_cpu_only_pytorch_model.py
@@ -48,7 +48,7 @@ $TVM_ROOT/how-to/sample_app/docs/face_landmark_localization/deeppose.pt
 ###############################################################################
 #   Prepare TVM Translator Scripts for DRP trans
 ###############################################################################
-cd $TVM_ROOT/tutorials
+
 
 sed "s/0x438E0000/${ADDR_MAP}/" compile_pytorch_model.py > compile_pytorch_mpose.py
 

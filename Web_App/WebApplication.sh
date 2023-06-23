@@ -1,22 +1,22 @@
 
-if [[ $1 == "V2L" ]]; then
+if [[ $PRODUCT == "V2L" ]]; then
 ADDR_MAP=0x838E0000
-elif [[ $1 == "V2M" ]]; then
+elif [[ $PRODUCT == "V2M" ]]; then
 ADDR_MAP=0xC38E0000
-elif [[ $1 == "V2MA" ]]; then
+elif [[ $PRODUCT == "V2MA" ]]; then
 ADDR_MAP=0x438E0000
 else
     echo "Enter V2MA, V2M, or V2L"
     exit
 fi
-DUM=0
+DUM=1
 
 pip3 install mmcv-full==1.6.1
 pip3 install mmpose==0.28.1
 
-OUTPUT_DIR=/root/RZ${1}/RZV_TVM_WebDemo
-[[ -d $OUTPUT_DIR ]] && rm -rfd $OUTPUT_DIR
-mkdir $OUTPUT_DIR
+OUTPUT_DIR=/root/RZ${PRODUCT}/RZV_TVM_WebDemo
+#[[ -d $OUTPUT_DIR ]] && rm -rfd $OUTPUT_DIR
+#mkdir $OUTPUT_DIR
 
 cd /root/Scripts/Web_App
 
@@ -24,13 +24,13 @@ cd /root/Scripts/Web_App
 #   Translate TVM Models
 ###############################################################################
 cd Models
-./Classification.sh $1 $ADDR_MAP $OUTPUT_DIR
-./Emotion_Recognition.sh $1 $ADDR_MAP $OUTPUT_DIR
-./Face_Detection.sh $1 $ADDR_MAP $OUTPUT_DIR
-#./Face_Landmark.sh $1 $ADDR_MAP $OUTPUT_DIR
-#./Hand_Landmark.sh $1 $ADDR_MAP $OUTPUT_DIR
-./Human_Pose.sh $1 $ADDR_MAP $OUTPUT_DIR
-#./Object_Detection.sh $1 $ADDR_MAP $OUTPUT_DIR
+#./Classification.sh $PRODUCT $ADDR_MAP $OUTPUT_DIR
+#./Emotion_Recognition.sh $PRODUCT $ADDR_MAP $OUTPUT_DIR
+#./Face_Detection.sh $PRODUCT $ADDR_MAP $OUTPUT_DIR
+#./Face_Landmark.sh $PRODUCT $ADDR_MAP $OUTPUT_DIR
+#./Hand_Landmark.sh $PRODUCT $ADDR_MAP $OUTPUT_DIR
+#./Human_Pose.sh $PRODUCT $ADDR_MAP $OUTPUT_DIR
+##./Object_Detection.sh $PRODUCT $ADDR_MAP $OUTPUT_DIR
 
 ###############################################################################
 #   Build Web Application
