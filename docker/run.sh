@@ -1,6 +1,6 @@
 SRC_DIR=/media/zkmike/RZ/RZV2L
 HOST_DIR=/home/zkmike/workspace/yocto/RZV2L
-OSS_DIR=/home/zkmike/workspace/yocto/RZV2L/oss_package
+OSS_DIR=/home/zkmike/workspace/yocto/oss_package_rzv
 
 docker container prune -f
 
@@ -10,7 +10,7 @@ docker run -it \
   --volume="${SRC_DIR}:/home/${USER}/source" \
   --volume="${OSS_DIR}:/home/${USER}/oss_package" \
   --workdir="/home/${USER}/yocto" \
-  rzv2_yocto:1.00
+  rzg2_yocto:1.00
   
 docker container prune -f
 

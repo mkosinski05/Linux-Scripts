@@ -1,5 +1,6 @@
 SRC_DIR=/home/zkmike/source
 DL_DIR=/home/zkmike/oss_package
+WORK_DIR=$PWD/rzv2l_ai
 
 pushd ${SRC_DIR}
 LinuxBSP=`find ${SRC_DIR} -name RTK0EF0045Z0024AZJ* -printf "%f\n"`
@@ -10,12 +11,12 @@ ISP=`find ${SRC_DIR} -name r11an0561ej* -printf "%f\n"`
 DRP=`find ${SRC_DIR} -name r11an0549ej* -printf "%f\n"`
 CM33=`find ${SRC_DIR} -name r01an6238ej* -printf "%f\n"`
 popd
-WORK_DIR=$PWD/$1
-ENABLE_BUILD=$2
+
+ENABLE_BUILD=1
 ISP_ENABLED=0
 EDGEE_ENABLED=0
-ENABLE_AI_FRAMEWORK=0
 ENABLE_AI_FRAMEWORK=1
+
 echo "##############################################################################################"
 
 echo "Work Directory : ${WORK_DIR}"
@@ -80,7 +81,7 @@ sed -i '/demos.inc/a include ${LAYERDIR}/include/openamp/openamp.inc' ./meta-rz-
 cd $WORK_DIR
 
 source poky/oe-init-build-env
-pwd
+
 cp ../meta-renesas/docs/template/conf/smarc-rzv2l/*.conf ./conf/
 
 echo -e "DL_DIR = \"${DL_DIR}\"\n" >> conf/local.conf
@@ -105,7 +106,7 @@ if [[ $EDGEE_ENABLED -eq 1 ]]; then
 fi
 
 if [[ ${ENABLE_DEBUG} -eq 1 ]] ; then
-    echo "ENABLE dEBUGGING"
+    echo "ENABLE DEBUGGING"
 	sed -i '/INCOMPATIBLE_LICENSE/d' ./conf/local.conf
 	echo -e "IMAGE_INSTALL_append = \" rpm openssh openssh-sftp-server openssh-scp gdbserver\"" >> ./conf/local.conf
 	echo -e "PACKAGE_EXCLUDE += \" packagegroup-core-ssh-dropbear\"" >> ./conf/local.conf
@@ -120,7 +121,7 @@ if [[ $ENABLE_AI_FRAMEWORK -eq 1 ]]; then
     
     # Add layer
     ## bitbake-layers add-layer ${WORK_DIR}/meta-renesas-ai 
-    sed -i '/.*meta-multimedia.*/a\  ${TOPDIR}/../meta-openembedded/meta-renesas-ai \\' ./conf/bblayers.conf
+    sed -i '/.*meta-multimedia.*/a\  ${TOPDIR}/../meta-renesas-ai \\' ./conf/bblayers.conf
     
     # Modifiy recipes to support RZV2L
     sed  -i 's/smarc-rzg2l|/&smarc-rzv2l|/' ${WORK_DIR}/meta-renesas-ai/recipes-mathematics/arm-compute-library/arm-compute-library_22.02.bb

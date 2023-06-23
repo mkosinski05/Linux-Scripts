@@ -1,6 +1,6 @@
 SRC_DIR=/home/zkmike/source
 DL_DIR=/home/zkmike/oss_package
-DL_DIR=/home/zkmike/downloads
+WORK_DIR=$PWD/rzv2l
 
 pushd ${SRC_DIR}
 LinuxBSP=`find ${SRC_DIR} -name RTK0EF0045Z0024AZJ* -printf "%f\n"`
@@ -11,8 +11,8 @@ ISP=`find ${SRC_DIR} -name r11an0561ej* -printf "%f\n"`
 DRP=`find ${SRC_DIR} -name r11an0549ej* -printf "%f\n"`
 CM33=`find ${SRC_DIR} -name r01an6238ej* -printf "%f\n"`
 popd
-WORK_DIR=$PWD/$1
-ENABLE_BUILD=$2
+
+ENABLE_BUILD=1
 ISP_ENABLED=0
 EDGEE_ENABLED=0
 ENABLE_AI_FRAMEWORK=0
@@ -73,19 +73,15 @@ if [[ $ISP_ENABLED -eq 1 ]]; then
 	tar -zxvf ./${ISP::-4}/meta-rz-features.tar.gz
 fi
 
-if [[ ENABLE_AI_FRAMEWORK -gt 0 ]]; then
-	git clone https://github.com/mkosinski05/meta-renesas-ai.git
-fi
-
 ## Reinsert the MultiOS recipe into the meta-rz-features/conf/layers.conf
 cd $WORK_DIR
 sed -i '/demos.inc/a include ${LAYERDIR}/include/openamp/openamp.inc' ./meta-rz-features/conf/layer.conf
 
 ### Set up the Yocto Environment and copy a default configuration
-echo $WORK_DIR
 cd $WORK_DIR
-pwd
+
 source poky/oe-init-build-env
+
 cp ../meta-renesas/docs/template/conf/smarc-rzv2l/*.conf ./conf/
 
 
@@ -99,6 +95,7 @@ echo -e "IMAGE_FSTYPES_remove += \"ext4\"\n" >> conf/local.conf
 echo -e "IMAGE_INSTALL_append = \" libsdl2-dev\""  >> conf/local.conf
 
 if [[ $EDGEE_ENABLED -eq 1 ]]; then
+    echo "ENABLE EDGE IMPULSE"
 	mv -n ../meta-renesas/include/core-image-bsp.inc ../meta-renesas/include/core-image-bsp.inc_org
 
 	grep -v "lttng" ../meta-renesas/include/core-image-bsp.inc_org >> ../meta-renesas/include/core-image-bsp.inc
@@ -110,6 +107,7 @@ if [[ $EDGEE_ENABLED -eq 1 ]]; then
 fi
 
 if [[ ${ENABLE_DEBUG} -eq 1 ]] ; then
+    echo "ENABLE DEBUGGING"
 	sed -i '/INCOMPATIBLE_LICENSE/d' ./conf/local.conf
 	echo -e "IMAGE_INSTALL_append = \" rpm openssh openssh-sftp-server openssh-scp gdbserver\"" >> ./conf/local.conf
 	echo -e "PACKAGE_EXCLUDE += \" packagegroup-core-ssh-dropbear\"" >> ./conf/local.conf
