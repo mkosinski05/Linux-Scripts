@@ -18,13 +18,13 @@ RUN pip3 install decorator attrs scipy numpy==1.23.5 pytest
 RUN pip3 install torch==1.8.0 torchvision==0.9.0 tensorflow tflite
 
 # Install onnxruntime
-RUN wget https://github.com/microsoft/onnxruntime/releases/download/v1.8.1/onnxruntime-linux-x64-1.8.1.tgz -O /tmp/onnxruntime.tar.gz 
-RUN tar -xvzf /tmp/onnxruntime.tar.gz -C /tmp/ 
-RUN mv /tmp/onnxruntime-linux-x64-1.8.1/ /opt/
+RUN wget https://github.com/microsoft/onnxruntime/releases/download/v1.8.1/onnxruntime-linux-x64-1.8.1.tgz -O /tmp/onnxruntime.tar.gz \
+    && tar -xvzf /tmp/onnxruntime.tar.gz -C /tmp/ \
+    && mv /tmp/onnxruntime-linux-x64-1.8.1/ /opt/
     
 # Install SDK
 COPY ./poky*.sh /opt
-RUN chmod a+x /opt/poky*.sh
+RUN chmod a+x /opt/poky-glibc-x86_64-core-image-bsp-aarch64-rzv2l-toolchain-*.sh
 RUN cd /opt && yes "" | ./poky*.sh
 RUN rm /opt/poky*.sh
 
