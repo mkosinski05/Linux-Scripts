@@ -1,16 +1,15 @@
+#!/bin/bash
 
-if [[ $ENABLE -eq 1 ]]; then
-
-	if [[ ! -f "DRP-AI_Translator-v*" ]]; then
-		echo "Download DRP-AI Translator"
-		exit
-	fi
-
-	if [[ ! -f "poky-*" ]]; then
-		echo "Build and Download SDK"
-		exit
-	fi
+if [[ ! -f "DRP-AI_Translator-v*" ]]; then
+	echo "Download DRP-AI Translator"
+	exit
 fi
+
+if [[ ! -f "poky-*" ]]; then
+	echo "Build and Download SDK"
+	exit
+fi
+
 
 if [[ $1 == "V2MA" ]]; then
     docker build --file Dockerfile.r2ma -t drp-ai_tvm_v2ma_image --build-arg SDK="/opt/poky/3.1.14" --build-arg PRODUCT="V2MA" .
