@@ -1,8 +1,8 @@
-if [[ $PRODUCT == "V2L" ]]; then
+if [[ $1 == "V2L" ]]; then
 ADDR_MAP=0x838E0000
-elif [[ $PRODUCT == "V2M" ]]; then
+elif [[ $1 == "V2M" ]]; then
 ADDR_MAP=0xC38E0000
-elif [[ $PRODUCT == "V2MA" ]]; then
+elif [[ $1 == "V2MA" ]]; then
 ADDR_MAP=0x438E0000
 else
     echo "Enter V2MA, V2M, or V2L"
