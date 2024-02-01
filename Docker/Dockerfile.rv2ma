@@ -23,8 +23,8 @@ RUN wget https://github.com/microsoft/onnxruntime/releases/download/v1.8.1/onnxr
     && mv /tmp/onnxruntime-linux-x64-1.8.1/ /opt/
     
 # Install SDK
-COPY ./poky*.sh /opt
-RUN chmod a+x /opt/poky-glibc-x86_64-core-image-bsp-aarch64-rzv2m-toolchain-*.sh
+COPY ./poky-glibc-x86_64-core-image-weston-aarch64-smarc-rzv2ma-toolchain-*.sh /opt
+RUN chmod +x /opt/poky-*.sh
 RUN cd /opt && yes "" | ./poky*.sh
 RUN rm /opt/poky*.sh
 

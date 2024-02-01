@@ -34,6 +34,18 @@ elif [[ $1 == "V2L" ]]; then
         -v $(pwd)/Scripts:/root/Scripts \
         drp-ai_tvm_v2l_image
     fi
+elif [[ $1 == "V2H" ]]; then
+    if [ "$( docker container inspect -f '{{.State.Status}}' drp-ai_tvm_v2h_container )" == "exited" ]; then 
+         echo "Restart drp-ai_tvm_v2h_container"
+         docker start -ia  drp-ai_tvm_v2h_container
+    else
+        echo "Start drp-ai_tvm_v2h_container"
+        docker run -it --name drp-ai_tvm_v2h_container \
+        -v rzv2l_tvm:/drp-ai_tvm \
+        -v $(pwd)/RZV2L:/root/RZV2L \
+        -v $(pwd)/Scripts:/root/Scripts \
+        drp-ai_tvm_v2h_image
+    fi
 else
-    echo "Enter V2MA, V2M, or V2L"
+    echo "Enter V2MA, V2M, V2H, or V2L"
 fi
